@@ -21,17 +21,19 @@ public class ShareFile {
     private Uri uri;
     private String type;
     private String filename;
+    private boolean addUtf8Bom;
 
-    public ShareFile(String url, String type, String filename, ReactApplicationContext reactContext){
-        this(url, filename, reactContext);
+    public ShareFile(String url, String type, String filename, boolean addUtf8Bom, ReactApplicationContext reactContext){
+        this(url, filename, addUtf8Bom, reactContext);
         this.type = type;
     }
 
-    public ShareFile(String url, String filename, ReactApplicationContext reactContext){
+    public ShareFile(String url, String filename, boolean addUtf8Bom, ReactApplicationContext reactContext){
         this.url = url;
         this.uri = Uri.parse(this.url);
         this.reactContext = reactContext;
         this.filename = filename;
+        this.addUtf8Bom = addUtf8Bom;
     }
     /**
      * Obtain mime type from URL
@@ -114,6 +116,10 @@ public class ShareFile {
                 }
                 File file = new File(dir, filename + "." + extension);
                 final FileOutputStream fos = new FileOutputStream(file);
+                if (this.addUtf8Bom) {
+                    final byte[] bom = new byte[] { (byte)0xEF, (byte)0xBB, (byte)0xBF };
+                    fos.write(bom);
+                }
                 fos.write(Base64.decode(encodedImg, Base64.DEFAULT));
                 fos.flush();
                 fos.close();

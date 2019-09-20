@@ -101,10 +101,14 @@ public abstract class ShareIntent {
         if (ShareIntent.hasValidKey("filename", options)) {
             filename = options.getString("filename");
         }
+        boolean addUtf8Bom = false;
+        if (ShareIntent.hasValidKey("utf8bom", options)) {
+            addUtf8Bom = options.getBoolean("utf8bom");
+        }
         if (ShareIntent.hasValidKey("type", options)) {
-            return new ShareFile(options.getString("url"), options.getString("type"), filename, this.reactContext);
+            return new ShareFile(options.getString("url"), options.getString("type"), filename, addUtf8Bom, this.reactContext);
         } else {
-            return new ShareFile(options.getString("url"), filename, this.reactContext);
+            return new ShareFile(options.getString("url"), filename, addUtf8Bom, this.reactContext);
         }
     }
 
